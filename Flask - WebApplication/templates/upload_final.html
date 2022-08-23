@@ -1,0 +1,84 @@
+<!doctype html>
+<title>Python Flask Upload Multiple Images and Display them</title>
+<html>
+<head>
+<style>
+body {text-align: center;}
+</style>
+</head>
+
+<body>
+<p>
+<img src="https://raw.githubusercontent.com/cetuslapetus/cetuslapetus.github.io/main/smartfashionlogo.png" alt="ourlogo">
+</p>
+
+<h2>Select multiple images to upload and display</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+
+<form method="post" action="/upload_image" enctype="multipart/form-data">
+    <dl>
+		<p>
+			<input type="file" name="files[]" multiple="true" autocomplete="off" required>
+		</p>
+    </dl>
+    <p>
+		<input type="submit" value="Submit">
+	</p>
+</form>
+
+{% if filenames %}
+	{% for filename in filenames %}
+		<div>
+			<img src="{{ url_for('display_image', filename=filename) }}">
+		</div>
+	{% endfor %}
+{% endif %}
+
+<p>Display the style</p>
+
+<!--<button type="button" onclick="loadDoc()">Generate the style</button>-->
+
+<form method="post" action="/generate_styles" enctype="multipart/form-data">
+	<p>
+		<input type="submit" value="Generate the style">
+	</p>
+</form>
+
+<p id="demo"></p>
+
+{% if img_path %}
+<div>
+	<img src="{{ img_path }}" >
+</div>
+{% endif %}
+<!--<div>-->
+<!--	<img src='123.jpg' alt ="Generated Images">-->
+<!--</div>-->
+
+<!--<img id="myimage" />-->
+
+<script>
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var data = JSON.parse(this.responseText);
+      document.getElementById("myimage").src = data.results[0].picture.large
+    }
+  };
+  xhttp.open("GET", "http://127.0.0.1:5000/generate_styles", true);
+  xhttp.send();
+}
+</script>
+</body>
+<html>
